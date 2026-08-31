@@ -13,8 +13,8 @@ class ImportacionRegistro extends Model
     public const ESTADO_ERROR = 'ERROR';
     protected $fillable = [
         'importacion_id',
+        'numero_fila',
         'codigo_certificado',
-        'numero_item',
         'datos_certificado',
         'datos_item',
         'estado',

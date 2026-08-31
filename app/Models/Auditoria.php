@@ -3,13 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Auditoria extends Model
 {
-    use HasUuids;
-    protected $table = 'auditorias';
+    protected $table = 'auditoria';
     protected $fillable = [
         'uuid',
         'tabla',
@@ -20,11 +18,6 @@ class Auditoria extends Model
         'usuario_id',
         'ip',
     ];
-
-    public function uniqueIds(): array
-    {
-        return ['uuid'];
-    }
 
     protected function casts(): array
     {

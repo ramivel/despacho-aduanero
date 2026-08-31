@@ -14,7 +14,7 @@ return new class extends Migration
     {
         Schema::create('importaciones', function (Blueprint $table) {
             $table->id();
-            $table->uuid('uuid')->unique();
+            $table->uuid('uuid')->unique()->default(DB::raw('gen_random_uuid()'));
             $table->string('archivo_original');
             $table->string('nombre_archivo');
             $table->timestamp('fecha_importacion');

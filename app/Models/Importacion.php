@@ -5,18 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
 class Importacion extends Model
 {
-    use HasUuids;
     protected $table = 'importaciones';
     public const ESTADO_PROCESANDO = 'PROCESANDO';
     public const ESTADO_COMPLETADA = 'COMPLETADA';
     public const ESTADO_ERROR = 'ERROR';
     public const ESTADO_ANULADA = 'ANULADA';
     protected $fillable = [
-        'uuid',
         'archivo_original',
         'nombre_archivo',
         'fecha_importacion',
@@ -31,9 +28,9 @@ class Importacion extends Model
         'observacion',
     ];
 
-    public function uniqueIds(): array
+    public function getRouteKeyName(): string
     {
-        return ['uuid'];
+        return 'uuid';
     }
 
     protected function casts(): array

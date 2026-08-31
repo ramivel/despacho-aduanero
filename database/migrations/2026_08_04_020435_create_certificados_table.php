@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -13,24 +14,25 @@ return new class extends Migration
     {
         Schema::create('certificados', function (Blueprint $table) {
             $table->id();
-            $table->uuid('uuid')->unique();
+            $table->uuid('uuid')->unique()->default(DB::raw('gen_random_uuid()'));
             $table->foreignId('importacion_id')
                 ->constrained('importaciones')
-                ->restrictOnDelete();
+                ->restrictOnDelete()
+                ->nullable();
             $table->string('codigo_certificado',30)->unique();
             $table->string('tipo_solicitud',80)->nullable();
             $table->string('nit',30)->nullable();
             $table->text('nombre_empresa');
             $table->date('fecha_solicitud')->nullable();
             $table->timestamp('fecha_emision_certificado')->nullable();
-            $table->string('uso',120)->nullable();
+            $table->text('uso')->nullable();
             $table->string('tipo_producto',120)->nullable();
             $table->text('proveedor')->nullable();
-            $table->boolean('producto_refrigerado')->default(false);
+            $table->boolean('producto_refrigerado')->default(false)->nullable();
             $table->string('nro_factura',80)->nullable();
             $table->decimal('monto_factura',12,2)->nullable();
             $table->string('procedencia',100)->nullable();
-            $table->string('usuario_origen',100);
+            $table->string('usuario_origen',100)->nullable();
             $table->integer('cantidad_items')->default(0);
             $table->boolean('activo')->default(true);
             $table->boolean('editado')->default(false);

@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -13,22 +14,22 @@ return new class extends Migration
     {
         Schema::create('certificado_items', function (Blueprint $table) {
             $table->id();
-            $table->uuid('uuid')->unique();
+            $table->uuid('uuid')->unique()->default(DB::raw('gen_random_uuid()'));
             $table->foreignId('certificado_id')
                 ->constrained('certificados')
                 ->cascadeOnDelete();
             $table->integer('numero_item');
-            $table->decimal('cantidad', 12, 2)
+            $table->decimal('cantidad_medicamento', 12, 2)
                 ->nullable();
             $table->text('producto');
-            $table->string('registro_sanitario', 80)
+            $table->text('registro_sanitario')
                 ->nullable();
             $table->date('fecha_vencimiento')
                 ->nullable();
-            $table->string('numero_lote', 100)
+            $table->string('nro_lote', 100)
                 ->nullable();
-            $table->boolean('evaluacion')
-                ->default(false);
+            $table->string('evaluacion_item', 100)
+                ->nullable();
             $table->boolean('activo')
                 ->default(true);
             $table->boolean('editado')
@@ -45,7 +46,7 @@ return new class extends Migration
             $table->index('producto');
             $table->index('registro_sanitario');
             $table->index('fecha_vencimiento');
-            $table->index('numero_lote');
+            $table->index('nro_lote');
         });
     }
 

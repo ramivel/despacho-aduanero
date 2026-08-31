@@ -14,7 +14,7 @@ return new class extends Migration
     {
         Schema::create('auditoria', function (Blueprint $table) {
             $table->id();
-            $table->uuid('uuid')->unique();
+            $table->uuid('uuid')->unique()->default(DB::raw('gen_random_uuid()'));
             $table->string('tabla', 100);
             $table->unsignedBigInteger('registro_id');
             $table->string('accion', 20);

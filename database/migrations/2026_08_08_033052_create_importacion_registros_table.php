@@ -16,9 +16,8 @@ return new class extends Migration
             $table->foreignId('importacion_id')
                 ->constrained('importaciones')
                 ->cascadeOnDelete();
+            $table->unsignedInteger('numero_fila');
             $table->string('codigo_certificado', 100);
-            $table->integer('numero_item')
-                ->nullable();
             $table->jsonb('datos_certificado')
                 ->nullable();
             $table->jsonb('datos_item')
@@ -30,6 +29,12 @@ return new class extends Migration
             $table->boolean('seleccionado')
                 ->default(true);
             $table->timestamps();
+
+            $table->index([
+                'importacion_id',
+                'estado',
+                'seleccionado',
+            ], 'idx_importacion_estado_seleccionado');
         });
     }
 

@@ -3,17 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Certificado extends Model
 {
-    use HasUuids;
-
     protected $table = 'certificados';
     protected $fillable = [
-        'uuid',
         'importacion_id',
         'codigo_certificado',
         'tipo_solicitud',
@@ -35,9 +31,9 @@ class Certificado extends Model
         'observacion',
     ];
 
-    public function uniqueIds(): array
+    public function getRouteKeyName(): string
     {
-        return ['uuid'];
+        return 'uuid';
     }
 
     protected function casts(): array
