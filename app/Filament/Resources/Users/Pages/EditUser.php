@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Users\Pages;
 
 use App\Filament\Resources\Users\UserResource;
+use App\Services\AuditoriaService;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Notifications\Notification;
@@ -10,6 +11,7 @@ use Filament\Notifications\Notification;
 class EditUser extends EditRecord
 {
     protected static string $resource = UserResource::class;
+    protected array $datosAnteriores = [];
 
     protected function getHeaderActions(): array
     {
@@ -23,8 +25,30 @@ class EditUser extends EditRecord
         return $this->getResource()::getUrl('index');
     }
 
+    protected function getSavedNotification(): ?Notification
+    {
+        return null;
+    }
+
+    protected function beforeSave(): void
+    {
+        $this->datosAnteriores = [
+            'name' => $this->record->name,
+            'email' => $this->record->email,
+        ];
+    }
+
     protected function afterSave(): void
     {
+        app(AuditoriaService::class)->registrar(
+            'UPDATE',
+            $this->record,
+            $this->datosAnteriores,
+            [
+                'name' => $this->record->name,
+                'email' => $this->record->email,
+            ],
+        );
         Notification::make()
             ->title('Usuario actualizado')
             ->body("Se actualizó correctamente el registro")

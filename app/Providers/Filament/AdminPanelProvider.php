@@ -3,9 +3,11 @@
 namespace App\Providers\Filament;
 
 use Filament\Http\Middleware\Authenticate;
+use App\Http\Middleware\CheckUserActive;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Navigation\NavigationGroup;
 use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
@@ -27,21 +29,27 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
-            ->login()
-            ->viteTheme('resources/css/filament/admin/theme.css')
+            /* BRANDING */
+            ->favicon(asset('images/favicon.png'))
+            /* COLORS */
             ->colors([
-                'primary' => Color::Amber,
+                'primary' => Color::Emerald,
             ])
-            ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
-            ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
+            /* DARK MODE */
+            ->darkMode(false)
+            /* SIDE BAR */
+            ->sidebarCollapsibleOnDesktop()
+            /* NAVIGATION GROUPS */
+            ->navigationGroups([
+                NavigationGroup::make()->label('Administración')
+            ])
+            /* LOGIN */
+            ->login()
+            /* PAGES */
             ->pages([
                 Dashboard::class,
             ])
-            ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
-            ->widgets([
-                AccountWidget::class,
-                FilamentInfoWidget::class,
-            ])
+            /* MIDDLEWARE */
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
@@ -54,7 +62,20 @@ class AdminPanelProvider extends PanelProvider
                 DispatchServingFilamentEvent::class,
             ])
             ->authMiddleware([
+                CheckUserActive::class,
                 Authenticate::class,
+            ], isPersistent: true)
+            /* THEME FOR TAILWIND CSS */
+            ->viteTheme('resources/css/filament/admin/theme.css')
+
+            ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
+            ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
+
+            ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
+            ->widgets([
+                AccountWidget::class,
+                FilamentInfoWidget::class,
             ]);
+
     }
 }

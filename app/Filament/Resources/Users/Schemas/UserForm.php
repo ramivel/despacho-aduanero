@@ -42,7 +42,8 @@ class UserForm
                             ->minLength(8)
                             ->maxLength(255)
                             ->autocomplete('new-password')
-                            ->placeholder('Ingrese una contraseña segura de al menos 8 caracteres'),
+                            ->placeholder('Ingrese una contraseña segura de al menos 8 caracteres')
+                            ->visibleOn('create'),
                     ]),
             ]);
     }
