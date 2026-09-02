@@ -68,18 +68,15 @@ class UsersTable
                         ? 'Desactivar'
                         : 'Activar')
                     ->action(function (User $record): void {
-                        $activoAnterior = $record->activo;
+                        $datosAnteriores = $record->getAttributes();
                         $record->activo = ! $record->activo;
                         $record->save();
+                        $datosNuevos = $record->getAttributes();
                         app(AuditoriaService::class)->registrar(
                             'UPDATE',
                             $record,
-                            [
-                                'activo' => $activoAnterior,
-                            ],
-                            [
-                                'activo' => $record->activo,
-                            ],
+                            $datosAnteriores,
+                            $datosNuevos,
                         );
                         Notification::make()
                             ->title($record->activo ? 'Usuario activado' : 'Usuario desactivado')
@@ -129,17 +126,17 @@ class UsersTable
                     )
                     ->modalSubmitActionLabel('Cambiar contraseña')
                     ->action(function (User $record, array $data): void {
+                        $datosAnteriores = $record->getAttributes();
+                        $datosAnteriores['password'] = '[OCULTA]';
                         $record->password = $data['password'];
                         $record->save();
+                        $datosNuevos = $record->getAttributes();
+                        $datosNuevos['password'] = '[ACTUALIZADA]';
                         app(AuditoriaService::class)->registrar(
                             'UPDATE',
                             $record,
-                            [
-                                'password' => '[OCULTA]',
-                            ],
-                            [
-                                'password' => '[ACTUALIZADA]',
-                            ],
+                            $datosAnteriores,
+                            $datosNuevos,
                         );
                         Notification::make()
                             ->title('Contraseña actualizada')

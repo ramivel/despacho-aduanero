@@ -42,6 +42,13 @@ class AuditoriasTable
                     ->label('IP')
                     ->searchable(),
             ])
+            ->recordUrl(null)
+            ->defaultSort('created_at', 'desc')
+            ->defaultPaginationPageOption(500)
+            ->paginationPageOptions([
+                500,
+                1000,
+            ])
             ->recordActions([
                 ViewAction::make()
                     ->label('Ver')
@@ -54,13 +61,6 @@ class AuditoriasTable
                             ->close(),
                     ])
                     ->modalFooterActionsAlignment(Alignment::End),
-            ])
-            ->recordUrl(null)
-            ->defaultSort('created_at', 'desc')
-            ->defaultPaginationPageOption(500)
-            ->paginationPageOptions([
-                500,
-                1000,
             ]);
     }
 }

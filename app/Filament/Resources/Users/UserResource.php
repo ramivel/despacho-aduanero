@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Users;
 
+use App\Enums\NavigationGroupEnum;
 use App\Filament\Resources\Users\Pages\CreateUser;
 use App\Filament\Resources\Users\Pages\EditUser;
 use App\Filament\Resources\Users\Pages\ListUsers;
@@ -19,10 +20,9 @@ class UserResource extends Resource
 {
     protected static ?string $model = User::class;
     protected static ?string $navigationLabel = 'Usuarios';
-    protected static string|UnitEnum|null $navigationGroup = 'Administración';
+    protected static string|UnitEnum|null $navigationGroup = NavigationGroupEnum::ADMINISTRACION->value;
     protected static string|BackedEnum|null $navigationIcon = Heroicon::Users;
     protected static ?string $recordTitleAttribute = 'name';
-    protected static ?int $navigationSort = 1;
 
     public static function form(Schema $schema): Schema
     {

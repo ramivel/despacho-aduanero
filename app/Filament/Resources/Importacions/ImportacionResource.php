@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Importacions;
 
+use App\Enums\NavigationGroupEnum;
 use App\Filament\Resources\Importacions\Pages\CreateImportacion;
 use App\Filament\Resources\Importacions\Pages\EditImportacion;
 use App\Filament\Resources\Importacions\Pages\ImportarArchivo;
@@ -14,6 +15,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use UnitEnum;
 
 class ImportacionResource extends Resource
 {
@@ -21,8 +23,8 @@ class ImportacionResource extends Resource
     protected static ?string $navigationLabel = 'Importar Registros';
     protected static ?string $modelLabel = 'Importación';
     protected static ?string $pluralModelLabel = 'Importaciones';
+    protected static string|UnitEnum|null $navigationGroup = NavigationGroupEnum::DESPACHOS->value;
     protected static string|BackedEnum|null $navigationIcon = Heroicon::CircleStack;
-    protected static ?int $navigationSort = 1;
 
     protected static ?string $recordTitleAttribute = 'nombre_archivo';
 

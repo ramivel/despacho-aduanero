@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Auditorias;
 
+use App\Enums\NavigationGroupEnum;
 use App\Filament\Resources\Auditorias\Pages\CreateAuditoria;
 use App\Filament\Resources\Auditorias\Pages\EditAuditoria;
 use App\Filament\Resources\Auditorias\Pages\ListAuditorias;
@@ -21,9 +22,8 @@ class AuditoriaResource extends Resource
 {
     protected static ?string $model = Auditoria::class;
     protected static ?string $navigationLabel = 'Auditoria';
-    protected static string|UnitEnum|null $navigationGroup = 'Administración';
+    protected static string|UnitEnum|null $navigationGroup = NavigationGroupEnum::ADMINISTRACION->value;
     protected static string|BackedEnum|null $navigationIcon = Heroicon::ClipboardDocumentList;
-    protected static ?int $navigationSort = 2;
 
     public static function form(Schema $schema): Schema
     {

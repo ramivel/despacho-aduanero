@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Enums\NavigationGroupEnum;
 use BackedEnum;
 use UnitEnum;
 use Filament\Pages\Page;
@@ -18,9 +19,8 @@ use Maatwebsite\Excel\Facades\Excel;
 class ControlImportacion extends Page implements HasForms
 {
     protected static ?string $navigationLabel = 'Control de Importación';
-    protected static string|UnitEnum|null $navigationGroup = 'Reportes';
+    protected static string|UnitEnum|null $navigationGroup = NavigationGroupEnum::REPORTES->value;
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-chart-bar';
-    protected static ?int $navigationSort = 1;
     protected static ?string $title = 'Reporte de Control de Importación';
     protected string $view = 'filament.pages.control-importacion';
     public ?array $data = [];

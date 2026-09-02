@@ -7,7 +7,6 @@ use App\Http\Middleware\CheckUserActive;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
-use Filament\Navigation\NavigationGroup;
 use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
@@ -20,6 +19,7 @@ use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use App\Filament\Navigation\AdminNavigation;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -40,9 +40,7 @@ class AdminPanelProvider extends PanelProvider
             /* SIDE BAR */
             ->sidebarCollapsibleOnDesktop()
             /* NAVIGATION GROUPS */
-            ->navigationGroups([
-                NavigationGroup::make()->label('Administración')
-            ])
+            ->navigationGroups(AdminNavigation::groups())
             /* LOGIN */
             ->login()
             /* PAGES */

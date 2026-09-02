@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Certificados;
 
+use App\Enums\NavigationGroupEnum;
 use App\Filament\Resources\Certificados\Pages\CreateCertificado;
 use App\Filament\Resources\Certificados\Pages\EditCertificado;
 use App\Filament\Resources\Certificados\Pages\ListCertificados;
@@ -15,21 +16,16 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use UnitEnum;
 
 class CertificadoResource extends Resource
 {
     protected static ?string $model = Certificado::class;
-
     protected static ?string $navigationLabel = 'Certificados';
-
     protected static ?string $modelLabel = 'Certificado';
-
     protected static ?string $pluralModelLabel = 'Certificados';
-
-    protected static string|BackedEnum|null $navigationIcon =
-        Heroicon::DocumentDuplicate;
-
-    protected static ?int $navigationSort = 2;
+    protected static string|UnitEnum|null $navigationGroup = NavigationGroupEnum::DESPACHOS->value;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::DocumentDuplicate;
 
     public static function form(Schema $schema): Schema
     {

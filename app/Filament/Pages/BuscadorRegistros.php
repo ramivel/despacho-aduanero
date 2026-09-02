@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Enums\NavigationGroupEnum;
 use BackedEnum;
 use App\Models\Certificado;
 use Filament\Pages\Page;
@@ -17,6 +18,7 @@ use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Actions\Action;
 use Filament\Support\Enums\Alignment;
+use UnitEnum;
 
 class BuscadorRegistros extends Page implements HasForms, HasTable
 {
@@ -25,8 +27,8 @@ class BuscadorRegistros extends Page implements HasForms, HasTable
 
     protected static ?string $navigationLabel = 'Buscador Registros';
     protected static ?string $title = 'Buscador de Registros';
+    protected static string|UnitEnum|null $navigationGroup = NavigationGroupEnum::DESPACHOS->value;
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-magnifying-glass';
-    protected static ?int $navigationSort = 20;
     protected string $view = 'filament.pages.buscador-registros';
     public ?array $data = [];
     public bool $buscado = false;
