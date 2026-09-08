@@ -7,7 +7,6 @@ use App\Models\ImportacionRegistro;
 use App\Models\Certificado;
 use App\Models\CertificadoItem;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 use RuntimeException;
 use Throwable;
 use Carbon\Carbon;
@@ -24,11 +23,9 @@ class ImportacionService
         4  => 'fecha_revision',
         5  => 'fecha_emision_certificado',
         6  => 'tipo_solicitud',
-
         7  => 'nit',
         8  => 'nombre_empresa',
         9  => 'decreto_supremo',
-
         10 => 'ci_representante_legal',
         11 => 'lugar_expedicion_ci',
         12 => 'correo_electronico',
@@ -37,17 +34,13 @@ class ImportacionService
         15 => 'fecha_resolucion_ministerial',
         16 => 'nro_matricula_prof_regente',
         17 => 'nombre_regente',
-
         18 => 'uso',
         19 => 'tipo_producto',
-
         20 => 'proveedor',
         21 => 'producto_refrigerado',
         22 => 'nro_factura',
-
         23 => 'monto_factura',
         24 => 'procedencia',
-
         25 => 'cantidad_medicamento',
         26 => 'unidad',
         27 => 'producto',
@@ -64,9 +57,7 @@ class ImportacionService
         string $nombreOriginal,
         ?int $usuarioId = null
     ): Importacion {
-
         $importacion = Importacion::create([
-            'uuid' => (string) \Illuminate\Support\Str::uuid(),
             'archivo_original' => $nombreOriginal,
             'nombre_archivo' => $archivo,
             'fecha_importacion' => now(),
@@ -75,16 +66,11 @@ class ImportacionService
             'total_items' => 0,
             'estado' => 'PROCESANDO',
         ]);
-
         try {
-
             $reader = app(HtmlTableReader::class);
-
             $batch = [];
             $numeroFila = 0;
-
             $certificados = [];
-
             $reader->read(
                 $archivo,
                 function (array $row) use (
@@ -93,13 +79,11 @@ class ImportacionService
                     &$certificados,
                     $importacion
                 ) {
-
                     $numeroFila++;
                     $datos = $this->mapearFila(
                         $row,
                         $numeroFila
                     );
-
                     if ($datos === null) {
                         $batch[] = [
                             'importacion_id' => $importacion->id,
@@ -114,13 +98,10 @@ class ImportacionService
                             'updated_at' => now(),
                         ];
                     } else {
-
                         $codigo = $datos[
                             'codigo_certificado'
                         ];
-
                         $certificados[$codigo] = true;
-
                         $batch[] = [
                             'importacion_id' => $importacion->id,
                             'numero_fila' => $numeroFila,
@@ -140,34 +121,27 @@ class ImportacionService
                             'updated_at' => now(),
                         ];
                     }
-
                     if (
                         count($batch) >= self::TAMANO_LOTE
                     ) {
                         ImportacionRegistro::insert(
                             $batch
                         );
-
                         $batch = [];
                     }
                 }
             );
-
             if (!empty($batch)) {
                 ImportacionRegistro::insert(
                     $batch
                 );
             }
-
             $this->validarExistentes($importacion);
-
             $resumen = $this->obtenerResumenValidacion(
                 $importacion->id
             );
-
             $totalItems = $numeroFila;
             $totalCertificados = count($certificados);
-
             $importacion->update([
                 'total_registros' => $resumen['total_registros'],
                 'total_validos' => $resumen['total_validos'],
@@ -177,22 +151,15 @@ class ImportacionService
                 'total_items' => $totalItems,
                 'estado' => 'COMPLETADA',
             ]);
-
-            // El archivo ya cumplió su función.
-            // Los datos están almacenados en importacion_registros.
             if (is_file($archivo)) {
                 unlink($archivo);
             }
-
             return $importacion;
-
         } catch (Throwable $e) {
-
             $importacion->update([
                 'estado' => 'ERROR',
                 'observacion' => $e->getMessage(),
             ]);
-
             throw $e;
         }
     }
@@ -286,28 +253,20 @@ class ImportacionService
     private function validarExistentes(
         Importacion $importacion
     ): void {
-
         ImportacionRegistro::query()
             ->where('importacion_id', $importacion->id)
             ->whereNotNull('codigo_certificado')
             ->where('estado', 'VALIDO')
             ->chunkById(500, function ($registros) {
-
                 $codigos = $registros
                     ->pluck('codigo_certificado')
                     ->filter()
                     ->unique()
                     ->values()
                     ->all();
-
                 if (empty($codigos)) {
                     return;
                 }
-
-                /*
-                * Buscar los certificados que YA existen
-                * en la tabla definitiva.
-                */
                 $existentes = Certificado::query()
                     ->whereIn(
                         'codigo_certificado',
@@ -315,15 +274,12 @@ class ImportacionService
                     )
                     ->pluck('codigo_certificado')
                     ->flip();
-
                 foreach ($registros as $registro) {
-
                     if (
                         $existentes->has(
                             $registro->codigo_certificado
                         )
                     ) {
-
                         $registro->update([
                             'estado' => 'EXISTENTE',
                             'seleccionado' => false,
@@ -351,7 +307,6 @@ class ImportacionService
                 "COUNT(*) FILTER (WHERE estado = 'ERROR') as errores"
             )
             ->first();
-
         return [
             'total_registros' => (int) $resumen->total,
             'total_validos' => (int) $resumen->validos,

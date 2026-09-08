@@ -2,11 +2,14 @@
     <form wire:submit="validar">
         {{ $this->form }}
         <div class="mt-6 flex justify-end">
-            <x-filament::button
-                type="submit"
-                icon="heroicon-o-check"
-            >
-                Validar archivo
+            <x-filament::button type="submit" wire:loading.attr="disabled" wire:target="validar">
+                <span wire:loading.remove wire:target="validar" class="flex items-center gap-x-2">
+                    <x-filament::icon icon="heroicon-o-check" class="h-5 w-5" />
+                    Validar archivo
+                </span>
+                <span wire:loading.flex wire:target="validar" class="items-center gap-x-2">
+                    Validando archivo...
+                </span>
             </x-filament::button>
         </div>
     </form>
@@ -69,8 +72,7 @@
             @if ($this->puedeGuardar())
                 <div class="flex justify-end">
                     <x-filament::button
-                        wire:click="guardar"
-                        wire:confirm="¿Está seguro de guardar los registros seleccionados? Esta operación registrará los datos definitivamente en la base de datos."
+                        wire:click="mountAction('guardarRegistros')"
                         icon="heroicon-o-arrow-down-tray"
                         color="success"
                     >

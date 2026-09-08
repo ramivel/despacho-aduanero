@@ -8,22 +8,17 @@ use Filament\Resources\Pages\Page;
 use Filament\Forms\Components\FileUpload;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
-
 use App\Services\Importaciones\ImportacionService;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-
-
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Columns\ToggleColumn;
-
 use Filament\Actions\Action;
-
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Concerns\InteractsWithForms;
 
@@ -32,7 +27,6 @@ class ImportarArchivo extends Page implements HasTable, HasForms
 {
     use InteractsWithTable;
     use InteractsWithForms;
-
     protected static string $resource = ImportacionResource::class;
     protected string $view = 'filament.resources.importacions.pages.importar-archivo';
     public ?array $data = [];
@@ -47,7 +41,6 @@ class ImportarArchivo extends Page implements HasTable, HasForms
     {
         return $schema
             ->components([
-
                 Section::make('Archivo de importación')
                     ->description(
                         'Seleccione el archivo generado por el sistema.'
@@ -63,27 +56,23 @@ class ImportarArchivo extends Page implements HasTable, HasForms
                             ->directory('importaciones')
                             ->visibility('private')
                             ->preserveFilenames()
-                            /*->acceptedFileTypes([
+                            ->acceptedFileTypes([
                                 'text/html',
                                 'text/plain',
                                 'text/csv',
-                            ])*/
+                            ])
                             ->maxSize(102400)
                             ->helperText(
                                 'Tamaño máximo: 50 MB.'
                             ),
                     ]),
-
             ])
             ->statePath('data');
     }
 
-    public function validar(
-        ImportacionService $service
-    ): void {
+    public function validar(ImportacionService $service): void {
         $datos = $this->form->getState();
         $archivo = $datos['archivo'] ?? null;
-
         if (!$archivo) {
             Notification::make()
                 ->title('Archivo requerido')
@@ -249,7 +238,6 @@ class ImportarArchivo extends Page implements HasTable, HasForms
                 'errores' => 0,
             ];
         }
-
         $resultado = ImportacionRegistro::query()
             ->where('importacion_id', $this->importacionId)
             ->selectRaw("
@@ -265,7 +253,6 @@ class ImportarArchivo extends Page implements HasTable, HasForms
                 ) as errores
             ")
             ->first();
-
         return [
             'total' => (int) $resultado->total,
             'validos' => (int) $resultado->validos,
@@ -279,7 +266,6 @@ class ImportarArchivo extends Page implements HasTable, HasForms
         if (! $this->importacionId) {
             return false;
         }
-
         return ImportacionRegistro::query()
             ->where(
                 'importacion_id',
@@ -296,9 +282,21 @@ class ImportarArchivo extends Page implements HasTable, HasForms
             ->exists();
     }
 
-    public function guardar(
-        ImportacionService $service
-    ): void {
+    public function guardarRegistrosAction(): Action
+    {
+        return Action::make('guardarRegistros')
+            ->requiresConfirmation()
+            ->modalHeading('Guardar registros seleccionados')
+            ->modalDescription(
+                '¿Está seguro de guardar los registros seleccionados? ' .
+                'Esta operación registrará los datos definitivamente en la base de datos.'
+            )
+            ->modalSubmitActionLabel('Sí, guardar')
+            ->modalCancelActionLabel('Cancelar')
+            ->action(fn () => $this->guardar(app(ImportacionService::class)));
+    }
+
+    public function guardar(ImportacionService $service): void {
         if (! $this->importacionId) {
             Notification::make()
                 ->title('Importación no encontrada')
@@ -307,7 +305,6 @@ class ImportarArchivo extends Page implements HasTable, HasForms
                 ->send();
             return;
         }
-
         if (! $this->puedeGuardar()) {
             Notification::make()
                 ->title('No hay registros para guardar')
@@ -322,7 +319,6 @@ class ImportarArchivo extends Page implements HasTable, HasForms
             $service->guardarSeleccionados(
                 $this->importacionId
             );
-
             Notification::make()
                 ->title('Importación completada')
                 ->body(
@@ -330,16 +326,12 @@ class ImportarArchivo extends Page implements HasTable, HasForms
                 )
                 ->success()
                 ->send();
-
-            /*
-            * Refrescar la tabla.
-            */
-            $this->resetTable();
-
+            $this->redirect(
+                ImportacionResource::getUrl('index'),
+                navigate: true,
+            );
         } catch (\Throwable $e) {
-
             report($e);
-
             Notification::make()
                 ->title('Error al guardar')
                 ->body(

@@ -2,12 +2,7 @@
     <form wire:submit="generarReporte">
         {{ $this->form }}
         <div class="mt-5 flex justify-center">
-            <x-filament::button
-                type="submit"
-                icon="heroicon-o-chart-bar"
-            >
-                Generar reporte
-            </x-filament::button>
+            <x-filament::button type="submit" icon="heroicon-o-chart-bar">Generar reporte</x-filament::button>
         </div>
     </form>
 

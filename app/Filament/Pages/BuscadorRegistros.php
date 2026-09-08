@@ -3,8 +3,10 @@
 namespace App\Filament\Pages;
 
 use App\Enums\NavigationGroupEnum;
-use BackedEnum;
 use App\Models\Certificado;
+use BackedEnum;
+use Carbon\Carbon;
+use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -65,7 +67,7 @@ class BuscadorRegistros extends Page implements HasForms, HasTable
     {
         $texto = mb_strtoupper(trim($this->data['texto'] ?? ''));
         if ($texto === '') {
-            \Filament\Notifications\Notification::make()
+            Notification::make()
                 ->title('Ingrese un criterio de búsqueda')
                 ->body(
                     'Debe escribir el texto que desea buscar.'
@@ -81,7 +83,6 @@ class BuscadorRegistros extends Page implements HasForms, HasTable
     {
         return $table
             ->query(
-
                 Certificado::query()
                     ->where('activo', true)
                     ->with([
@@ -109,7 +110,7 @@ class BuscadorRegistros extends Page implements HasForms, HasTable
                                     break;
                                 case 'fecha_emision_certificado':
                                     try {
-                                        $fecha = \Carbon\Carbon::createFromFormat(
+                                        $fecha = Carbon::createFromFormat(
                                             'd/m/Y',
                                             $texto
                                         );
@@ -120,7 +121,7 @@ class BuscadorRegistros extends Page implements HasForms, HasTable
                                             $fecha->format('Y-m-d')
                                         );
                                     } catch (\Throwable) {
-                                        \Filament\Notifications\Notification::make()
+                                        Notification::make()
                                             ->title('Formato de fecha incorrecto')
                                             ->body('La fecha debe tener el formato DD/MM/YYYY. Ejemplo: 18/08/2026.')
                                             ->danger()
@@ -187,7 +188,7 @@ class BuscadorRegistros extends Page implements HasForms, HasTable
                             $query->where('activo', true),
                     ]),
             ])
-            ->actions([
+            ->recordActions([
                 Action::make('ver')
                     ->label('Ver')
                     ->icon('heroicon-o-eye')

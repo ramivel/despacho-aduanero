@@ -25,7 +25,6 @@ class ImportacionResource extends Resource
     protected static ?string $pluralModelLabel = 'Importaciones';
     protected static string|UnitEnum|null $navigationGroup = NavigationGroupEnum::DESPACHOS->value;
     protected static string|BackedEnum|null $navigationIcon = Heroicon::CircleStack;
-
     protected static ?string $recordTitleAttribute = 'nombre_archivo';
 
     public static function form(Schema $schema): Schema
