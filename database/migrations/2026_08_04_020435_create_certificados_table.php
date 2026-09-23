@@ -16,9 +16,9 @@ return new class extends Migration
             $table->id();
             $table->uuid('uuid')->unique()->default(DB::raw('gen_random_uuid()'));
             $table->foreignId('importacion_id')
+                ->nullable()
                 ->constrained('importaciones')
-                ->restrictOnDelete()
-                ->nullable();
+                ->restrictOnDelete();
             $table->string('codigo_certificado',30)->unique();
             $table->string('tipo_solicitud',80)->nullable();
             $table->string('nit',30)->nullable();

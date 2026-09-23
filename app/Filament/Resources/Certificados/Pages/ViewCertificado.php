@@ -14,6 +14,7 @@ use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\DB;
+use App\Filament\Resources\Certificados\Resources\CertificadoItems\CertificadoItemResource;
 
 class ViewCertificado extends ViewRecord
 {
@@ -35,17 +36,16 @@ class ViewCertificado extends ViewRecord
                 ->url(
                     CertificadoResource::getUrl('index')
                 ),
-
             Action::make('nuevoItem')
                 ->label('Nuevo item')
                 ->icon('heroicon-o-plus')
                 ->color('primary')
                 ->url(
                     fn (): string =>
-                        route(
-                            'filament.admin.resources.certificados.items.create',
+                        CertificadoItemResource::getUrl(
+                            'create',
                             [
-                                'record' => $this->record,
+                                'certificado' => $this->record->uuid,
                             ]
                         )
                 ),
@@ -66,58 +66,47 @@ class ViewCertificado extends ViewRecord
                         true
                     )
             )
-
             ->columns([
-
                 TextColumn::make('numero_item')
                     ->label('Nro')
                     ->rowIndex()
                     ->sortable(),
-
                 TextColumn::make('producto')
                     ->label('Producto')
                     ->searchable()
                     ->sortable()
                     ->wrap(),
-
                 TextColumn::make('registro_sanitario')
                     ->label('Registro Sanitario')
                     ->searchable()
                     ->sortable(),
-
                 TextColumn::make('nro_lote')
                     ->label('Nro. Lote')
                     ->searchable()
                     ->sortable(),
-
                 TextColumn::make('evaluacion_item')
                     ->label('Evaluación')
                     ->searchable()
                     ->sortable()
                     ->wrap(),
-
             ])
-
             ->defaultSort(
                 'numero_item',
                 'asc'
             )
-
             ->recordActions([
-
                 EditAction::make()
                     ->label('Editar')
                     ->url(
                         fn (CertificadoItem $record): string =>
-                            route(
-                                'filament.admin.resources.certificados.items.edit',
+                            CertificadoItemResource::getUrl(
+                                'edit',
                                 [
-                                    'record' => $this->record,
-                                    'item' => $record,
+                                    'certificado' => $this->record->uuid,
+                                    'record' => $record,
                                 ]
                             )
                     ),
-
                 DeleteAction::make()
                     ->label('Eliminar')
                     ->icon('heroicon-o-trash')
@@ -136,17 +125,13 @@ class ViewCertificado extends ViewRecord
                     ->modalSubmitActionLabel('Sí, Eliminar')
                     ->action(
                         function (CertificadoItem $record): void {
-
                             DB::transaction(
                                 function () use ($record): void {
-
                                     $datosAnteriores =
                                         $record->toArray();
-
                                     $record->update([
                                         'activo' => false,
                                     ]);
-
                                     app(
                                         \App\Services\AuditoriaService::class
                                     )->registrar(
@@ -161,7 +146,6 @@ class ViewCertificado extends ViewRecord
                                     );
                                 }
                             );
-
                             Notification::make()
                                 ->title('Item eliminado')
                                 ->body(
@@ -171,9 +155,7 @@ class ViewCertificado extends ViewRecord
                                 ->send();
                         }
                     ),
-
             ])
-
             ->striped()
             ->paginated([
                 25,

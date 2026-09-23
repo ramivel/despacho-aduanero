@@ -7,6 +7,7 @@ use Filament\Resources\Pages\CreateRecord;
 use App\Services\AuditoriaService;
 use Filament\Notifications\Notification;
 use Filament\Actions\Action;
+use App\Filament\Resources\Certificados\Resources\CertificadoItems\CertificadoItemResource;
 
 class CreateCertificado extends CreateRecord
 {
@@ -29,9 +30,13 @@ class CreateCertificado extends CreateRecord
     }
     protected function getRedirectUrl(): string
     {
-        return $this->getResource()::getUrl('index');
+        return CertificadoItemResource::getUrl(
+            'create',
+            [
+                'certificado' => $this->record->uuid,
+            ]
+        );
     }
-
     protected function getCreatedNotification(): ?Notification
     {
         return null;
